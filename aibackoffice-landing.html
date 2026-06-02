@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIBACKOFFICE — AI-Powered Back Office for Contractors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── FORCED BASELINE: prevents any viewer from flipping to light mode ── */
+    html { color-scheme: dark only; }
+
+    :root {
+      --bg-main:       #050A12;
+      --bg-secondary:  #07111F;
+      --card-bg:       #101A2B;
+      --card-hover:    #162238;
+      --text-main:     #F8FAFC;
+      --text-body:     #CBD5E1;
+      --text-muted:    #94A3B8;
+      --accent-blue:   #2F80FF;
+      --accent-cyan:   #38D5FF;
+      --success-green: #10B981;
+      --border-soft:   rgba(148,163,184,0.22);
+      --border-blue:   rgba(47,128,255,0.35);
+      --red-tag:       #EF4444;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #050A12;
+      background: linear-gradient(160deg, #050A12 0%, #07111F 50%, #0B1B33 100%);
+      color: #CBD5E1;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ── GRID TEXTURE ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(47,128,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(47,128,255,0.04) 1px, transparent 1px);
+      background-size: 64px 64px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 5vw;
+      background: rgba(5,10,18,0.9);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(47,128,255,0.18);
+    }
+
+    .nav-logo {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #F8FAFC;
+      text-decoration: none;
+    }
+    .nav-logo span { color: #2F80FF; }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #CBD5E1;
+      text-decoration: none;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #38D5FF; }
+
+    .nav-cta {
+      background: #2F80FF !important;
+      color: #ffffff !important;
+      padding: 0.5rem 1.2rem !important;
+      border-radius: 6px !important;
+      font-weight: 600 !important;
+      font-size: 0.82rem !important;
+      transition: background 0.2s, box-shadow 0.2s !important;
+    }
+    .nav-cta:hover {
+      background: #1D9BFF !important;
+      box-shadow: 0 0 20px rgba(47,128,255,0.4) !important;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 9rem 5vw 6rem;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .hero-glow-1 {
+      position: absolute;
+      top: -5%;
+      right: -8%;
+      width: 60vw; height: 60vw;
+      background: radial-gradient(circle, rgba(47,128,255,0.18) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-glow-2 {
+      position: absolute;
+      bottom: -15%;
+      left: -8%;
+      width: 35vw; height: 35vw;
+      background: radial-gradient(circle, rgba(56,213,255,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-content { position: relative; z-index: 1; max-width: 800px; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(47,128,255,0.12);
+      border: 1px solid rgba(56,213,255,0.35);
+      padding: 0.4rem 1.1rem;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #38D5FF;
+      margin-bottom: 1.75rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 7px; height: 7px;
+      background: #38D5FF;
+      border-radius: 50%;
+      animation: blink 2s infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:0.3; transform:scale(1.5); }
+    }
+
+    .hero h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(2.8rem, 6.5vw, 5.8rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: #F8FAFC;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 .blue { color: #2F80FF; }
+
+    .hero-sub {
+      font-size: clamp(1rem, 1.8vw, 1.15rem);
+      color: #CBD5E1;
+      line-height: 1.7;
+      max-width: 600px;
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+    }
+
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3.5rem; }
+
+    .btn-primary {
+      background: #2F80FF;
+      color: #ffffff;
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      padding: 0.9rem 2rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+      text-transform: uppercase;
+    }
+    .btn-primary:hover {
+      background: #1D9BFF;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(47,128,255,0.45);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #F8FAFC;
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      padding: 0.9rem 2rem;
+      border: 1.5px solid #38D5FF;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+      text-transform: uppercase;
+    }
+    .btn-secondary:hover {
+      background: rgba(56,213,255,0.08);
+      box-shadow: 0 0 20px rgba(56,213,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    .hero-stats { display: flex; gap: 3rem; flex-wrap: wrap; }
+
+    .stat-num {
+      font-family: 'Sora', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #2F80FF;
+      line-height: 1;
+      display: block;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      margin-top: 0.3rem;
+      display: block;
+    }
+
+    /* ── SECTION COMMONS ── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 6rem 5vw;
+      background: transparent;
+    }
+
+    .section-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #38D5FF;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .section-title {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: #F8FAFC;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-sub {
+      font-size: 1rem;
+      color: #CBD5E1;
+      max-width: 620px;
+      line-height: 1.75;
+      font-weight: 400;
+    }
+
+    .divider {
+      width: 48px; height: 2px;
+      background: #2F80FF;
+      margin: 1.5rem 0;
+    }
+
+    /* ── SECTION ALTERNATING BG ── */
+    .bg-alt {
+      background: rgba(7,17,31,0.8) !important;
+      border-top: 1px solid rgba(47,128,255,0.1);
+      border-bottom: 1px solid rgba(47,128,255,0.1);
+    }
+
+    /* ── PROBLEM ── */
+    .problem-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .problem-headline {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+      color: #F8FAFC;
+      margin-bottom: 1.25rem;
+    }
+    .problem-headline span { color: #EF4444; }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+    }
+
+    .problem-item {
+      background: rgba(239,68,68,0.07);
+      border: 1px solid rgba(239,68,68,0.22);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .problem-icon { font-size: 1.1rem; flex-shrink: 0; }
+    .problem-text {
+      font-size: 0.87rem;
+      color: #CBD5E1;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    /* ── SOLUTION CARDS ── */
+    .sol-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-top: 3rem;
+      max-width: 1200px;
+    }
+
+    .sol-card {
+      background: #101A2B;
+      border: 1px solid rgba(47,128,255,0.18);
+      border-radius: 10px;
+      padding: 1.75rem;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .sol-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #2F80FF, #38D5FF, transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .sol-card:hover { border-color: rgba(47,128,255,0.5); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(47,128,255,0.15); }
+    .sol-card:hover::before { opacity: 1; }
+
+    .sol-icon { font-size: 1.8rem; margin-bottom: 1rem; display: block; }
+    .sol-card h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #F8FAFC;
+      margin-bottom: 0.6rem;
+    }
+    .sol-card p {
+      font-size: 0.87rem;
+      color: #CBD5E1;
+      line-height: 1.65;
+    }
+
+    /* ── QA SECTION ── */
+    .qa-inner { max-width: 1200px; margin: 0 auto; }
+
+    .qa-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+
+    .qa-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 1.1rem 1.25rem;
+      background: rgba(16,185,129,0.05);
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 8px;
+    }
+    .qa-check {
+      width: 22px; height: 22px;
+      background: rgba(16,185,129,0.15);
+      border: 1px solid #10B981;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #10B981;
+      font-size: 0.72rem;
+      font-weight: 800;
+      margin-top: 0.1rem;
+    }
+    .qa-text {
+      font-size: 0.89rem;
+      color: #CBD5E1;
+      line-height: 1.55;
+      font-weight: 500;
+    }
+
+    /* ── SERVICES ── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.4rem;
+      margin-top: 3rem;
+      max-width: 1200px;
+    }
+
+    .service-card {
+      background: #101A2B;
+      border: 1px solid rgba(148,163,184,0.18);
+      border-radius: 10px;
+      padding: 2rem;
+      transition: all 0.25s;
+    }
+    .service-card:hover {
+      background: #162238;
+      border-color: rgba(47,128,255,0.4);
+      box-shadow: 0 8px 30px rgba(47,128,255,0.12);
+    }
+    .service-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: #2F80FF;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+    .service-card h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #F8FAFC;
+      margin-bottom: 0.65rem;
+    }
+    .service-card p {
+      font-size: 0.87rem;
+      color: #CBD5E1;
+      line-height: 1.65;
+    }
+    .service-tag {
+      display: inline-block;
+      margin-top: 1.1rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #38D5FF;
+      background: rgba(56,213,255,0.08);
+      border: 1px solid rgba(56,213,255,0.25);
+      padding: 0.25rem 0.75rem;
+      border-radius: 100px;
+    }
+
+    /* ── PRICING ── */
+    .pricing-inner { max-width: 1100px; margin: 0 auto; }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .price-card {
+      background: #101A2B;
+      border: 1px solid rgba(148,163,184,0.18);
+      border-radius: 12px;
+      padding: 2.25rem 2rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.25s;
+    }
+    .price-card:hover { border-color: rgba(47,128,255,0.4); box-shadow: 0 8px 32px rgba(47,128,255,0.12); }
+
+    .price-card.featured {
+      background: linear-gradient(160deg, #101A2B, rgba(47,128,255,0.1));
+      border-color: #2F80FF;
+      box-shadow: 0 0 40px rgba(47,128,255,0.2);
+    }
+
+    .price-badge {
+      position: absolute;
+      top: -13px; left: 50%;
+      transform: translateX(-50%);
+      background: #2F80FF;
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.3rem 1.1rem;
+      border-radius: 100px;
+      white-space: nowrap;
+      font-family: 'Sora', sans-serif;
+    }
+
+    .price-tier {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #38D5FF;
+      margin-bottom: 0.6rem;
+    }
+    .price-name {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #F8FAFC;
+      margin-bottom: 0.5rem;
+    }
+    .price-desc {
+      font-size: 0.85rem;
+      color: #CBD5E1;
+      line-height: 1.55;
+      margin-bottom: 1.5rem;
+      min-height: 50px;
+    }
+    .price-num {
+      font-family: 'Sora', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      color: #F8FAFC;
+      line-height: 1;
+    }
+    .price-num sup {
+      font-size: 1.3rem;
+      font-weight: 600;
+      vertical-align: top;
+      margin-top: 0.55rem;
+      display: inline-block;
+    }
+    .price-period { font-size: 0.82rem; color: #94A3B8; margin-left: 0.2rem; }
+    .price-setup {
+      font-size: 0.82rem;
+      color: #CBD5E1;
+      margin: 0.35rem 0 1.75rem;
+    }
+    .price-setup span { color: #38D5FF; font-weight: 600; }
+
+    .price-features { list-style: none; flex: 1; margin-bottom: 2rem; }
+    .price-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      font-size: 0.87rem;
+      color: #CBD5E1;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid rgba(148,163,184,0.1);
+      line-height: 1.45;
+    }
+    .price-features li::before {
+      content: '✓';
+      color: #10B981;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .price-cta {
+      display: block;
+      text-align: center;
+      padding: 0.9rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: 'Sora', sans-serif;
+    }
+    .price-cta.primary { background: #2F80FF; color: #ffffff; }
+    .price-cta.primary:hover { background: #1D9BFF; box-shadow: 0 6px 24px rgba(47,128,255,0.45); }
+    .price-cta.outline { background: transparent; color: #F8FAFC; border: 1.5px solid rgba(148,163,184,0.4); }
+    .price-cta.outline:hover { border-color: #38D5FF; color: #38D5FF; }
+
+    /* ── PROCESS ── */
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 0;
+      margin-top: 3.5rem;
+      max-width: 1100px;
+      position: relative;
+    }
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 1.75rem;
+      left: 12.5%; right: 12.5%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #2F80FF 30%, #2F80FF 70%, transparent);
+      opacity: 0.3;
+    }
+
+    .process-step { padding: 0 1.5rem; text-align: center; }
+
+    .step-num {
+      width: 3.5rem; height: 3.5rem;
+      background: #07111F;
+      border: 2px solid #2F80FF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Sora', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #2F80FF;
+      margin: 0 auto 1.25rem;
+      position: relative;
+      z-index: 1;
+    }
+    .process-step h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #F8FAFC;
+      margin-bottom: 0.6rem;
+    }
+    .process-step p {
+      font-size: 0.84rem;
+      color: #CBD5E1;
+      line-height: 1.65;
+    }
+
+    /* ── WHY ── */
+    .why-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .why-list { list-style: none; display: flex; flex-direction: column; gap: 0.85rem; }
+    .why-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: rgba(47,128,255,0.05);
+      border: 1px solid rgba(47,128,255,0.15);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .why-item:hover { background: rgba(47,128,255,0.1); border-color: rgba(47,128,255,0.35); }
+    .why-bullet {
+      width: 8px; height: 8px;
+      background: #2F80FF;
+      border-radius: 50%;
+      margin-top: 0.45rem;
+      flex-shrink: 0;
+    }
+    .why-text { font-size: 0.9rem; color: #CBD5E1; line-height: 1.55; }
+    .why-text strong { color: #F8FAFC; display: block; margin-bottom: 0.2rem; font-weight: 700; }
+
+    /* ── TRUST PANEL ── */
+    .trust-panel {
+      background: rgba(7,17,31,0.9);
+      border: 1px solid rgba(47,128,255,0.25);
+      border-radius: 14px;
+      padding: 3rem;
+      max-width: 920px;
+      margin: 3rem auto 0;
+    }
+    .trust-panel h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #F8FAFC;
+      margin-bottom: 1.25rem;
+    }
+    .trust-panel p {
+      font-size: 0.95rem;
+      color: #CBD5E1;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+    .trust-never {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 1.75rem;
+    }
+    .never-tag {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      padding: 0.35rem 0.9rem;
+      border-radius: 100px;
+      font-size: 0.77rem;
+      color: #fca5a5;
+    }
+    .never-tag::before { content: '✕'; font-weight: 700; font-size: 0.68rem; }
+
+    /* ── IDEAL ── */
+    .ideal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1.25rem;
+      margin-top: 3rem;
+      max-width: 1100px;
+    }
+    .ideal-card {
+      background: #101A2B;
+      border: 1px solid rgba(148,163,184,0.16);
+      border-radius: 10px;
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .ideal-card:hover { border-color: rgba(47,128,255,0.4); background: #162238; }
+    .ideal-icon { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
+    .ideal-card h4 {
+      font-family: 'Sora', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #F8FAFC;
+      margin-bottom: 0.45rem;
+    }
+    .ideal-card p { font-size: 0.82rem; color: #CBD5E1; line-height: 1.55; }
+
+    /* ── FINAL CTA ── */
+    .final-cta {
+      text-align: center;
+      padding: 8rem 5vw;
+      position: relative;
+      overflow: hidden;
+      background: rgba(7,17,31,0.6);
+      border-top: 1px solid rgba(47,128,255,0.15);
+    }
+    .final-cta::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 80vw; height: 80vw;
+      background: radial-gradient(circle, rgba(47,128,255,0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .final-cta h2 {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+      font-weight: 800;
+      color: #F8FAFC;
+      max-width: 820px;
+      margin: 0 auto 1.25rem;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      position: relative;
+    }
+    .final-cta h2 span { color: #2F80FF; }
+    .final-cta p {
+      font-size: 1.05rem;
+      color: #CBD5E1;
+      max-width: 580px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+      position: relative;
+    }
+    .final-cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; position: relative; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #030810;
+      border-top: 1px solid rgba(47,128,255,0.12);
+      padding: 2.25rem 5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-logo {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #F8FAFC;
+      letter-spacing: 0.06em;
+    }
+    .footer-logo span { color: #2F80FF; }
+    footer p { font-size: 0.8rem; color: #94A3B8; }
+
+    /* ── SCROLL FADE ── */
+    .fade-up { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .s1 { transition-delay: 0.1s; }
+    .s2 { transition-delay: 0.2s; }
+    .s3 { transition-delay: 0.3s; }
+    .s4 { transition-delay: 0.4s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      .problem-inner, .why-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .pricing-grid, .process-steps { grid-template-columns: 1fr; }
+      .process-steps::before { display: none; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 1rem 4vw; }
+      .hero { padding: 8rem 4vw 5rem; }
+      section { padding: 4rem 4vw; }
+      .problem-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#" class="nav-logo">AI<span>BACKOFFICE</span></a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#audit" class="nav-cta">Free Audit</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+  <div class="hero-content">
+    <div class="hero-badge">AI-Powered Back Office Systems</div>
+    <h1>
+      Stop Losing Jobs<br/>
+      <span class="blue">to Your Own Back Office</span>
+    </h1>
+    <p class="hero-sub">
+      AIBACKOFFICE installs simple AI-powered systems that help contractors follow up faster, draft professional documents, recover missed leads, and cut admin time — without replacing your team or your judgment.
+    </p>
+    <div class="hero-ctas">
+      <a href="#audit" class="btn-primary">Book a Free Back Office Audit</a>
+      <a href="#services" class="btn-secondary">See What We Automate</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <span class="stat-num">3–5</span>
+        <span class="stat-label">Jobs lost monthly to slow follow-up</span>
+      </div>
+      <div>
+        <span class="stat-num">40%</span>
+        <span class="stat-label">Leads lost before first callback</span>
+      </div>
+      <div>
+        <span class="stat-num">10+</span>
+        <span class="stat-label">Hours/week saved on admin</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROBLEM ── -->
+<section class="bg-alt">
+  <div class="problem-inner">
+    <div>
+      <span class="section-tag">// The Real Problem</span>
+      <h2 class="problem-headline">You do great work.<br/>Your back office is <span>costing you money.</span></h2>
+      <div class="divider"></div>
+      <p class="section-sub">Most contractors lose thousands every month — not because of bad work, but because of what happens after the phone rings. Missed calls, slow estimates, forgotten follow-ups. The back office is quietly bleeding revenue.</p>
+    </div>
+    <div class="problem-grid fade-up">
+      <div class="problem-item"><span class="problem-icon">📵</span><span class="problem-text">Missed calls with no follow-up system</span></div>
+      <div class="problem-item"><span class="problem-icon">📋</span><span class="problem-text">Estimates sent and never followed up</span></div>
+      <div class="problem-item"><span class="problem-icon">📷</span><span class="problem-text">Messy field notes sitting in texts</span></div>
+      <div class="problem-item"><span class="problem-icon">⏱️</span><span class="problem-text">Slow proposal turnaround costing jobs</span></div>
+      <div class="problem-item"><span class="problem-icon">⭐</span><span class="problem-text">Review requests never sent after jobs</span></div>
+      <div class="problem-item"><span class="problem-icon">💸</span><span class="problem-text">Unpaid invoices needing manual chasing</span></div>
+      <div class="problem-item"><span class="problem-icon">📞</span><span class="problem-text">GCs asking for updates you haven't sent</span></div>
+      <div class="problem-item"><span class="problem-icon">🌙</span><span class="problem-text">Owner doing admin work at 10pm</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SOLUTION ── -->
+<section>
+  <span class="section-tag">// The Solution</span>
+  <h2 class="section-title">AI Systems Built Around<br/>How Contractors Actually Work</h2>
+  <p class="section-sub">Not complicated software. A practical automation system built around your real workflows — using tools you may already have.</p>
+  <div class="sol-grid fade-up">
+    <div class="sol-card s1"><span class="sol-icon">⚡</span><h3>Respond Faster</h3><p>Automated first-touch messages so leads hear from you within minutes — not hours or days.</p></div>
+    <div class="sol-card s2"><span class="sol-icon">📄</span><h3>Draft Professional Documents</h3><p>Proposals, scopes of work, and follow-up emails built to a professional standard, fast.</p></div>
+    <div class="sol-card s3"><span class="sol-icon">🔁</span><h3>Follow Up Consistently</h3><p>Never let an estimate go cold. Automated sequences that close jobs you were already losing.</p></div>
+    <div class="sol-card s4"><span class="sol-icon">🛡️</span><h3>Humans Stay in Control</h3><p>Every automation has review steps built in. The system assists — your judgment makes the call.</p></div>
+  </div>
+</section>
+
+<!-- ── QA ── -->
+<section class="bg-alt">
+  <div class="qa-inner">
+    <span class="section-tag">// Quality Assurance</span>
+    <h2 class="section-title">Premium Quality Assurance<br/>Built Into Every System</h2>
+    <p class="section-sub">AIBACKOFFICE is not blind automation. Every workflow is mapped, tested, and built with human review where it matters most.</p>
+    <div class="qa-grid fade-up">
+      <div class="qa-item"><div class="qa-check">✓</div><p class="qa-text">Every workflow is mapped before anything is automated</p></div>
+      <div class="qa-item"><div class="qa-check">✓</div><p class="qa-text">Human review steps built into sensitive workflows</p></div>
+      <div class="qa-item"><div class="qa-check">✓</div><p class="qa-text">Estimates, pricing, and invoices never blindly auto-sent</p></div>
+      <div class="qa-item"><div class="qa-check">✓</div><p class="qa-text">Every automation tested before going live with real clients</p></div>
+      <div class="qa-item"><div class="qa-check">✓</div><p class="qa-text">Messages written in your company's exact brand voice</p></div>
+      <div class="qa-item"><div class="qa-check">✓</div><p class="qa-text">Follow-ups designed to protect client trust, not annoy them</p></div>
+      <div class="qa-item"><div class="qa-check">✓</div><p class="qa-text">Simple override path built into every client workflow</p></div>
+      <div class="qa-item"><div class="qa-check">✓</div><p class="qa-text">Job information organized so nothing falls through the cracks</p></div>
+      <div class="qa-item"><div class="qa-check">✓</div><p class="qa-text">Documents built to look professional and client-ready</p></div>
+      <div class="qa-item"><div class="qa-check">✓</div><p class="qa-text">Workflow mapping first — bottlenecks found before we build</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ── -->
+<section id="services">
+  <span class="section-tag">// What We Automate</span>
+  <h2 class="section-title">Seven Systems That<br/>Win More Jobs</h2>
+  <p class="section-sub">Each system targets a specific revenue leak in your back office. Start with one. Add more as you grow.</p>
+  <div class="services-grid fade-up">
+    <div class="service-card"><span class="service-num">01</span><h3>Missed-Call Recovery System</h3><p>Automatically texts leads when a call is missed, collects job info, and starts the conversation before your competitor calls back.</p><span class="service-tag">Lead Recovery</span></div>
+    <div class="service-card"><span class="service-num">02</span><h3>Estimate Follow-Up System</h3><p>Sends professional Day 1, Day 3, and Day 7 follow-ups so open estimates don't die in silence — and you close more jobs without lifting a finger.</p><span class="service-tag">Sales Conversion</span></div>
+    <div class="service-card"><span class="service-num">03</span><h3>AI Job Notes Summarizer</h3><p>Turns technician voice notes, photos, and rough field notes into clean, professional job summaries ready for the client file.</p><span class="service-tag">Field Efficiency</span></div>
+    <div class="service-card"><span class="service-num">04</span><h3>Proposal Draft Generator</h3><p>Converts approved estimate details into signature-ready proposals with scope, exclusions, payment terms, and professional formatting.</p><span class="service-tag">Professional Image</span></div>
+    <div class="service-card"><span class="service-num">05</span><h3>Review Request System</h3><p>Sends smart review requests after every completed job — timed after positive interactions — to build your online reputation automatically.</p><span class="service-tag">Reputation</span></div>
+    <div class="service-card"><span class="service-num">06</span><h3>Invoice Reminder System</h3><p>Sends polite, professional payment reminders that protect the client relationship while making sure you get paid on time.</p><span class="service-tag">Cash Flow</span></div>
+    <div class="service-card"><span class="service-num">07</span><h3>GC Communication Assistant</h3><p>Creates clean job updates, change order notes, clarification emails, and progress summaries for general contractors and property managers.</p><span class="service-tag">B2B Relations</span></div>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section class="bg-alt" id="pricing">
+  <div class="pricing-inner">
+    <span class="section-tag">// Transparent Pricing</span>
+    <h2 class="section-title">Simple Pricing.<br/>Real Results.</h2>
+    <p class="section-sub">No long-term contracts. Start with a pilot. Upgrade when you're ready. Every plan includes a setup fee to ensure your systems are built correctly from day one.</p>
+    <div class="pricing-grid fade-up">
+
+      <div class="price-card">
+        <div class="price-tier">Starter</div>
+        <div class="price-name">Back Office Essentials</div>
+        <p class="price-desc">Perfect for solo contractors and small teams ready to stop losing leads.</p>
+        <div><span class="price-num"><sup>$</sup>297<span class="price-period">/mo</span></span></div>
+        <p class="price-setup">One-time setup: <span>$497</span></p>
+        <ul class="price-features">
+          <li>Missed-Call Recovery System</li>
+          <li>Estimate Follow-Up (3-touch sequence)</li>
+          <li>Review Request System</li>
+          <li>Workflow map & audit included</li>
+          <li>Message templates in your brand voice</li>
+          <li>Email support</li>
+          <li>Up to 2 active workflows</li>
+        </ul>
+        <a href="#audit" class="price-cta outline">Get Started</a>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-badge">Most Popular</div>
+        <div class="price-tier">Growth</div>
+        <div class="price-name">Full Back Office</div>
+        <p class="price-desc">For growing contractors who want a complete back-office system that runs consistently.</p>
+        <div><span class="price-num"><sup>$</sup>597<span class="price-period">/mo</span></span></div>
+        <p class="price-setup">One-time setup: <span>$997</span></p>
+        <ul class="price-features">
+          <li>Everything in Starter</li>
+          <li>Proposal Draft Generator</li>
+          <li>AI Job Notes Summarizer</li>
+          <li>Invoice Reminder System</li>
+          <li>GC Communication Assistant</li>
+          <li>Up to 5 active workflows</li>
+          <li>Monthly check-in call</li>
+          <li>Priority email & text support</li>
+        </ul>
+        <a href="#audit" class="price-cta primary">Book Free Audit</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Premium</div>
+        <div class="price-name">Done-For-You Pro</div>
+        <p class="price-desc">Full concierge service for established contractors and multi-crew operations.</p>
+        <div><span class="price-num"><sup>$</sup>997<span class="price-period">/mo</span></span></div>
+        <p class="price-setup">One-time setup: <span>$1,497</span></p>
+        <ul class="price-features">
+          <li>Everything in Growth</li>
+          <li>Custom workflow builds on request</li>
+          <li>Unlimited active workflows</li>
+          <li>Bi-weekly strategy calls</li>
+          <li>CRM integration & setup</li>
+          <li>Team training included</li>
+          <li>Dedicated account manager</li>
+          <li>First-priority support</li>
+        </ul>
+        <a href="#audit" class="price-cta outline">Let's Talk</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── PROCESS ── -->
+<section id="process">
+  <span class="section-tag">// How It Works</span>
+  <h2 class="section-title">From Audit to Automation<br/>in Four Steps</h2>
+  <p class="section-sub">We don't just set up software. We map your actual workflow first, then build systems your team will actually use.</p>
+  <div class="process-steps fade-up">
+    <div class="process-step"><div class="step-num">01</div><h3>Back Office Audit</h3><p>We review how calls, leads, estimates, follow-ups, invoices, and job notes currently flow through your business.</p></div>
+    <div class="process-step"><div class="step-num">02</div><h3>Workflow Map</h3><p>We map every process clearly before building anything — revealing bottlenecks and protecting your client experience.</p></div>
+    <div class="process-step"><div class="step-num">03</div><h3>Automation Buildout</h3><p>We install AI-powered systems using Zapier, Make, Google Workspace, Twilio, Airtable, and your existing platforms.</p></div>
+    <div class="process-step"><div class="step-num">04</div><h3>Test, Train & Improve</h3><p>We test every automation, train your team, and fine-tune the system until it actually runs — not just on paper.</p></div>
+  </div>
+</section>
+
+<!-- ── WHY ── -->
+<section class="bg-alt">
+  <div class="why-inner">
+    <div>
+      <span class="section-tag">// Why Contractors Choose Us</span>
+      <h2 class="section-title">Built by Someone<br/>Who Gets the Field</h2>
+      <div class="divider"></div>
+      <p class="section-sub">AIBACKOFFICE was built by a service-business operator who understands missed calls, estimate chaos, field work pressure, and owner overwhelm — because he lives it every day. These aren't generic software templates. They're systems built around how contractors actually work.</p>
+    </div>
+    <ul class="why-list fade-up">
+      <li class="why-item"><div class="why-bullet"></div><div class="why-text"><strong>Save 10+ hours of admin work every week</strong>Less time on phones, emails, and chasing paperwork.</div></li>
+      <li class="why-item"><div class="why-bullet"></div><div class="why-text"><strong>Respond to leads before your competitor does</strong>Speed wins jobs. Automated first-touch in minutes.</div></li>
+      <li class="why-item"><div class="why-bullet"></div><div class="why-text"><strong>Look more professional at every touchpoint</strong>Documents and proposals built to impress GCs and homeowners.</div></li>
+      <li class="why-item"><div class="why-bullet"></div><div class="why-text"><strong>Win more jobs through consistent follow-up</strong>Follow-up sequences close the deals you're already earning.</div></li>
+      <li class="why-item"><div class="why-bullet"></div><div class="why-text"><strong>Build systems your whole team will actually use</strong>Simple, practical, tested before going live.</div></li>
+      <li class="why-item"><div class="why-bullet"></div><div class="why-text"><strong>Stop doing office work at 10pm</strong>Reclaim your evenings. Let the system handle what doesn't need you.</div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── TRUST ── -->
+<section>
+  <span class="section-tag">// AI With Human Control</span>
+  <h2 class="section-title">AI That Helps Your Office.<br/>Not AI That Replaces Your Judgment.</h2>
+  <div class="trust-panel fade-up">
+    <h3>Your Business. Your Decisions. Always.</h3>
+    <p>AIBACKOFFICE keeps you in control. Every system is built with a human review step for anything that matters. Sensitive items — estimates, pricing, invoices, legal documents, permits, safety issues, technical decisions, and customer disputes — always include human review before final action.</p>
+    <p>The system handles the drafting, organizing, reminding, and summarizing. You handle the judgment calls. That's not a limitation — that's the right way to run an AI-powered business.</p>
+    <div class="trust-never">
+      <span class="never-tag">AI will run your business for you</span>
+      <span class="never-tag">Fully automated estimates with no review</span>
+      <span class="never-tag">Replace your office staff</span>
+      <span class="never-tag">Set it and forget it</span>
+      <span class="never-tag">Guaranteed revenue numbers</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── IDEAL CLIENT ── -->
+<section class="bg-alt">
+  <span class="section-tag">// Who This Is For</span>
+  <h2 class="section-title">Built For Service Businesses<br/>Ready to Grow</h2>
+  <p class="section-sub">AIBACKOFFICE works best for small to mid-size home service businesses that want real systems — not more complicated software.</p>
+  <div class="ideal-grid fade-up">
+    <div class="ideal-card"><span class="ideal-icon">🔧</span><h4>Plumbing & HVAC</h4><p>Busy owners missing follow-ups and leaving estimates open too long</p></div>
+    <div class="ideal-card"><span class="ideal-icon">⚡</span><h4>Electrical</h4><p>Teams that want to look more professional and win more bids</p></div>
+    <div class="ideal-card"><span class="ideal-icon">🏠</span><h4>Roofing & Remodeling</h4><p>Companies missing review requests and losing repeat clients</p></div>
+    <div class="ideal-card"><span class="ideal-icon">🔨</span><h4>Handyman & General</h4><p>Solo operators wearing every hat who need admin off their plate</p></div>
+    <div class="ideal-card"><span class="ideal-icon">🏗️</span><h4>Construction & GC Work</h4><p>Businesses needing clean GC communication and scope documents</p></div>
+    <div class="ideal-card"><span class="ideal-icon">🏢</span><h4>Property Managers</h4><p>Teams managing multiple vendors who need organized, documented service</p></div>
+    <div class="ideal-card"><span class="ideal-icon">🧹</span><h4>Cleaning Services</h4><p>Cleaning companies losing recurring clients to slow follow-up and missed booking requests</p></div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ── -->
+<section class="final-cta" id="audit">
+  <h2>Ready to Turn Your Back Office Into a <span>Job-Winning Machine?</span></h2>
+  <p>Book a free AIBACKOFFICE audit. We'll identify your biggest time leaks, missed follow-ups, and automation opportunities — no obligation, no pitch pressure.</p>
+  <div class="final-cta-btns">
+    <a href="https://calendly.com/your-link" class="btn-primary">Book My Free Back Office Audit</a>
+    <a href="https://calendly.com/your-link" class="btn-secondary">Get a Workflow Review</a>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">AI<span>BACKOFFICE</span></div>
+  <p>© 2025 AIBACKOFFICE. All rights reserved.</p>
+  <p>Built for contractors. Run by operators.</p>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>
